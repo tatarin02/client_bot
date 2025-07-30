@@ -118,23 +118,51 @@ def save_mock_payment(user_id, plan_key):
     conn.commit()
     conn.close()
 
-# === Получаем неиспользованную оплату и помечаем её использованной ===
-def get_and_mark_payment_as_used(user_id, plan_key):
-    conn = sqlite3.connect(DB_PATH)
+import sqlite3
+
+import sqlite3
+
+def get_and_mark_payment_by_email(email):
+    """
+    Находит неиспользованную оплату по email, определяет план по amount,
+    помечает запись как использованную и возвращает plan_key.
+    """
+    conn = sqlite3.connect("/root/cloudpayments-server/payments.db")
     cursor = conn.cursor()
-    cursor.execute('''
-        SELECT id, paid_at FROM payments
-        WHERE user_id = ? AND plan_key = ? AND used = 0
-        ORDER BY paid_at ASC
+
+    cursor.execute("""
+        SELECT id, amount FROM emails
+        WHERE email = ? AND used = 0
         LIMIT 1
-    ''', (user_id, plan_key))
+    """, (email,))
     row = cursor.fetchone()
 
-    if row:
-        payment_id = row[0]
-        cursor.execute('UPDATE payments SET used = 1 WHERE id = ?', (payment_id,))
-        conn.commit()
+    if not row:
         conn.close()
-        return {"id": payment_id, "paid_at": row[1]}
+        return None
+
+    entry_id, amount = row
+
+    # Очистка значения amount (например, '11.00' → '11')
+    amount_clean = str(amount).strip()
+    if '.' in amount_clean:
+        amount_clean = amount_clean.rstrip('0').rstrip('.')
+
+    amount_to_plan = {
+        "10": "monthly",
+        "11": "3months",
+        "12": "6months",
+        "13": "12months"
+    }
+
+    plan_key = amount_to_plan.get(amount_clean)
+    if not plan_key:
+        conn.close()
+        return None
+
+    # Помечаем запись как использованную
+    cursor.execute("UPDATE emails SET used = 1 WHERE id = ?", (entry_id,))
+    conn.commit()
     conn.close()
-    return None
+
+    return {"plan_key": plan_key}

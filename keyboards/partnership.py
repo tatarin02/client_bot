@@ -12,6 +12,7 @@ import sys
 import os
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 from env import *
+from text_replies import *
 
 ADMIN_ID = ADMIN_ID_PARTNERSHIP  # Telegram ID администратора партнёрства
 
@@ -21,11 +22,17 @@ async def open_partnership_menu(update: Update, context: ContextTypes.DEFAULT_TY
     query = update.callback_query
     await query.answer()
     keyboard = InlineKeyboardMarkup([
-        [InlineKeyboardButton("📩 Я хочу стать партнёром", callback_data="become_partner")],
+
+
+        
+        # [InlineKeyboardButton("📩 Я хочу стать партнёром", callback_data="become_partner")],
+
+
+        
         [InlineKeyboardButton("⬅️ В главное меню", callback_data="back_to_main")]
     ])
     await query.message.reply_text(
-        "🤝 Партнёрская программа:\nНажмите кнопку ниже, если хотите стать партнёром.",
+partnership_1,
         reply_markup=keyboard
     )
 
@@ -37,7 +44,7 @@ async def become_partner(update: Update, context: ContextTypes.DEFAULT_TYPE):
     context.user_data["state"] = "awaiting_partner_message"
 
     await query.message.reply_text(
-        "✉️ Пожалуйста, отправьте сообщение для администратора (например, как вы хотите сотрудничать):"
+        partnership_2
     )
 
 
@@ -57,9 +64,9 @@ async def receive_partner_message(update: Update, context: ContextTypes.DEFAULT_
     )
 
     await update.message.reply_text(
-        "Спасибо! Мы с вами свяжемся.",
+        partnership_3,
         reply_markup=InlineKeyboardMarkup([
-            [InlineKeyboardButton("⬅️ В главное меню", callback_data="back_to_main")]
+            [InlineKeyboardButton(partnership_4, callback_data="back_to_main")]
         ])
     )
 

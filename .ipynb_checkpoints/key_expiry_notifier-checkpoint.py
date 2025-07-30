@@ -27,11 +27,7 @@ def notify_expiring_keys():
         for user_id, port, expires_at in keys:
             expires_dt = datetime.fromisoformat(expires_at)
             if 0 <= (expires_dt - datetime.utcnow()).total_seconds() <= 86400:
-                message = (
-                    f"⚠️ <b>Внимание!</b>\n"
-                    f"Ваш ключ на порту <b>{port}</b> истекает через 1 день (до {expires_dt.strftime('%d.%m.%Y %H:%M UTC')}).\n"
-                    f"Продлите или выберите новый тариф."
-                )
+                message = key_expiry_notifier_1
                 send_telegram_message(user_id, message)
 
 if __name__ == "__main__":

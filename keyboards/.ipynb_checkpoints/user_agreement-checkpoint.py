@@ -5,18 +5,23 @@ from db import accept_agreement, get_choice, is_agreement_accepted
 from keyboards.main_menu import get_main_menu
 from text_replies import USER_AGREEMENT_TEXT
 
+import sys
+import os
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+from text_replies import *
+
 
 # Функция показать текст соглашения с кнопками
 async def show_user_agreement(update: Update, context: ContextTypes.DEFAULT_TYPE, show_full=True):
     if show_full:
         keyboard = [
-            [InlineKeyboardButton("✅ Ознакомился", callback_data="accept_agreement")],
-            [InlineKeyboardButton("💎 Поддержка", callback_data="support")],
-            [InlineKeyboardButton("❌ Отказаться", callback_data="decline_agreement")]
+            [InlineKeyboardButton(user_agreement_1, callback_data="accept_agreement")],
+            [InlineKeyboardButton(user_agreement_2, callback_data="support")],
+            [InlineKeyboardButton(user_agreement_3, callback_data="decline_agreement")]
         ]
     else:
         keyboard = [
-            [InlineKeyboardButton("⬅️ В главное меню", callback_data="back_to_main")]
+            [InlineKeyboardButton(user_agreement_4, callback_data="back_to_main")]
         ]
 
     reply_markup = InlineKeyboardMarkup(keyboard)
@@ -37,21 +42,21 @@ async def agreement_button_handler(update: Update, context: ContextTypes.DEFAULT
 
     if query.data == "accept_agreement":
         accept_agreement(user_id)
-        await query.edit_message_text("✅ Спасибо за принятие соглашения!")
+        await query.edit_message_text(user_agreement_5)
 
         user_choice = get_choice(user_id)
         reply_markup = get_main_menu(user_choice, user_id)
 
         await query.message.reply_text(
-            "🏠 Добро пожаловать в главное меню!",
+            user_agreement_6,
             reply_markup=reply_markup
         )
 
     elif query.data == "decline_agreement":
         # Завершаем сессию — больше ничего не показываем
         await query.edit_message_text(
-            "❌ Вы отказались от соглашения.\n\n"
-            "Чтобы начать заново — введите /start.",
+            user_agreement_7
+            user_agreement_8,
             reply_markup=None
         )
 
@@ -60,7 +65,7 @@ async def agreement_button_handler(update: Update, context: ContextTypes.DEFAULT
         user_choice = get_choice(user_id)
         reply_markup = get_main_menu(user_choice, user_id)
     
-        await query.message.reply_text("🏠 Главное меню", reply_markup=reply_markup)
+        await query.message.reply_text(user_agreement_9, reply_markup=reply_markup)
     
 
 from telegram.ext import CallbackQueryHandler

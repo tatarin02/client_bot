@@ -3,6 +3,11 @@ from telegram.ext import ContextTypes, CallbackQueryHandler
 from outline.outline_script import get_all_keys_with_connections, get_data_usage
 from datetime import datetime, timedelta
 
+import sys
+import os
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+from text_replies import *
+
 async def handle_my_stats_callback(update: Update, context: ContextTypes.DEFAULT_TYPE):
     query = update.callback_query
     user_id = query.from_user.id
@@ -19,7 +24,7 @@ async def handle_my_stats_callback(update: Update, context: ContextTypes.DEFAULT
     user_keys = [k for k in keys if str(k.get("user_id")) == str(user_id)]
 
     if not user_keys:
-        await query.message.reply_text("❌ У тебя пока нет созданных ключей.")
+        await query.message.reply_text(my_stats_1)
         return
 
     total_traffic_mb = 0
@@ -44,7 +49,7 @@ async def handle_my_stats_callback(update: Update, context: ContextTypes.DEFAULT
         active_keys.append(key)
 
     if not active_keys:
-        await query.message.reply_text("❌ У тебя есть ключи, но все они просрочены.")
+        await query.message.reply_text(my_stats_2)
         return
 
     for key in active_keys:
@@ -69,9 +74,9 @@ async def handle_my_stats_callback(update: Update, context: ContextTypes.DEFAULT
 
     # Кнопка возврата
     back_markup = InlineKeyboardMarkup([
-        [InlineKeyboardButton("🔙 В главное меню", callback_data="back_to_main")]
+        [InlineKeyboardButton(my_stats_3, callback_data="back_to_main")]
     ])
-    await query.message.reply_text("⬆️ Выше — твоя статистика по ключам:", reply_markup=back_markup)
+    await query.message.reply_text(my_stats_4, reply_markup=back_markup)
 
 
 def get_my_stats_handler():

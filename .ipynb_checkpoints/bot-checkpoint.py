@@ -24,7 +24,7 @@ from keyboards.user_agreement import (
 from keyboards.tariff import register_tariff_handlers
 from keyboards.partnership import register_partnership_handlers_ptb
 from keyboards.support import register_support_handlers_ptb
-# from keyboards.my_keys import get_my_key_handler
+from keyboards.my_keys import get_my_key_handler
 from keyboards.my_stats import get_my_stats_handler
 from message_router import message_router
 
@@ -46,8 +46,9 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     reply_markup = get_main_menu(user_choice, user_id)
 
     await update.message.reply_text(
-        text_1_greating.format(user_first_name=user_first_name) +
-        f"\nuser_id = {user_id}\nuser_choice = {user_choice}",
+        text_1_greating.format(user_first_name=user_first_name), 
+        # +
+        # f"\nuser_id = {user_id}\nuser_choice = {user_choice}",
         reply_markup=reply_markup
     )
 
@@ -71,12 +72,12 @@ register_support_handlers_ptb(app)
 register_partnership_handlers_ptb(app)
 register_tariff_handlers(app)
 
-# app.add_handler(get_my_key_handler())
+app.add_handler(get_my_key_handler())
 app.add_handler(get_my_stats_handler())
 
 app.add_handler(
     MessageHandler(
-        filters.TEXT & ~filters.Regex("^(📋 Тарифный план|📜 Соглашение об использовании|💎 Поддержка|🔵 Проверить оплату|🔵 Мои ключи|🔵 Моя статистика|🤝 Партнёрство)$"),
+        filters.TEXT & ~filters.Regex(bot_1 ),
         message_router
     )
 )

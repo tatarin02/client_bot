@@ -17,6 +17,11 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'o
 
 from outline_script import generate_qr_image, get_outline_keys_by_user_id
 
+import sys
+import os
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+from text_replies import *
+
 
 async def handle_my_key_callback(update: Update, context: ContextTypes.DEFAULT_TYPE):
     query = update.callback_query
@@ -35,16 +40,11 @@ async def handle_my_key_callback(update: Update, context: ContextTypes.DEFAULT_T
     df = df[df["expires_at"] > now]
 
     if df.empty:
-        await query.message.reply_text("❌ У тебя пока нет действующих ключей.")
+        await query.message.reply_text(my_keys_1)
         return
 
-    instruction = (
-        "<b>📲 Как пользоваться Outline VPN:</b>\n"
-        "1. Скачай приложение Outline: <a href='https://getoutline.org/ru/home'>getoutline.org</a>\n"
-        "2. Нажми «Добавить ключ» → «Вставить из буфера» или отсканируй QR-код.\n"
-        "3. Подключись к VPN одним нажатием.\n\n"
-        "⬇️ Твои ключи:"
-    )
+    instruction = my_keys_2
+
     await query.message.reply_text(instruction, parse_mode="HTML", disable_web_page_preview=True)
 
     for _, row in df.iterrows():
@@ -65,11 +65,11 @@ async def handle_my_key_callback(update: Update, context: ContextTypes.DEFAULT_T
             await query.message.reply_text(caption, parse_mode="HTML")
 
     back_markup = InlineKeyboardMarkup([
-        [InlineKeyboardButton("🔙 В главное меню", callback_data="back_to_main")]
+        [InlineKeyboardButton(my_keys_3, callback_data="back_to_main")]
     ])
 
     await query.message.reply_text(
-        "⬆️ Выше — твои ключи.\nНажми кнопку ниже, чтобы вернуться в меню:",
+        my_keys_4,
         reply_markup=back_markup
     )
 

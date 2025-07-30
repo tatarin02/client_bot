@@ -12,6 +12,7 @@ import sys
 import os
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 from env import *
+from text_replies import *
 
 ADMIN_ID = ADMIN_ID_SUPPORT
 
@@ -20,14 +21,17 @@ ADMIN_ID = ADMIN_ID_SUPPORT
 async def open_support_menu(update: Update, context: ContextTypes.DEFAULT_TYPE):
     query = update.callback_query
     await query.answer()
+    
     keyboard = InlineKeyboardMarkup([
-        [InlineKeyboardButton("📝 Написать в поддержку", callback_data="write_support")],
-        [InlineKeyboardButton("⬅️ В главное меню", callback_data="back_to_main")]
+        # [InlineKeyboardButton("📝 Написать в поддержку", callback_data="write_support")],
+        [InlineKeyboardButton(support_2, callback_data="back_to_main")]
     ])
+
     await query.message.reply_text(
-        "🆘 Служба поддержки:\nЕсли у вас возникли вопросы или проблемы — нажмите кнопку ниже.",
+        support_1,
         reply_markup=keyboard
     )
+
 
 
 # Переход к отправке сообщения
@@ -37,7 +41,7 @@ async def write_support(update: Update, context: ContextTypes.DEFAULT_TYPE):
     context.user_data["state"] = "awaiting_support_message"
 
     await query.message.reply_text(
-        "✉️ Пожалуйста, опишите вашу проблему, и мы передадим её администратору:"
+        support_3
     )
 
 
@@ -52,7 +56,7 @@ async def receive_support_message(update: Update, context: ContextTypes.DEFAULT_
     text = update.message.text
 
     if not text:
-        await update.message.reply_text("Пожалуйста, отправьте текстовое сообщение.")
+        await update.message.reply_text(support_4)
         return
 
     user_link = (
@@ -61,9 +65,9 @@ async def receive_support_message(update: Update, context: ContextTypes.DEFAULT_
     )
 
     await update.message.reply_text(
-        "✅ Ваше сообщение отправлено. Мы свяжемся с вами в ближайшее время.",
+        support_5 ,
         reply_markup=InlineKeyboardMarkup([
-            [InlineKeyboardButton("⬅️ В главное меню", callback_data="back_to_main")]
+            [InlineKeyboardButton(support_6, callback_data="back_to_main")]
         ])
     )
 
